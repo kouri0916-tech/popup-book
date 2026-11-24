@@ -21,15 +21,32 @@ const LAYER_DESC = {
 };
 
 // ---------------- 初始化 ----------------
-window.addEventListener('DOMContentLoaded', () => {
-  Book3D.init($('#stage3d'));
+function initApp() {
+  if (!window.THREE) {
+    // Three.js 尚未就绪（module 脚本异步加载），等待 three-ready 事件
+    window.addEventListener('three-ready', initApp, { once: true });
+    return;
+  }
+  try {
+    Book3D.init($('#stage3d'));
+  } catch (err) {
+    console.error('3D 初始化失败：', err);
+    $('#stageTitle').textContent = '3D 初始化失败：' + err.message;
+    return;
+  }
   bindUpload();
   bindToolbar();
   bindElementTabs();
   bindModeSwitch();
   $('#demoBtn').addEventListener('click', loadDemo);
   $('#welcomeUpload').addEventListener('click', () => $('#fileInput').click());
-});
+}
+
+if (window.THREE) {
+  initApp();
+} else {
+  window.addEventListener('three-ready', initApp, { once: true });
+}
 
 // ---------------- 上传 ----------------
 function bindUpload() {

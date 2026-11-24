@@ -83,7 +83,7 @@
     </div>
 
     <!-- 拆分进度 -->
-    <div class="seg-overlay" id="segOverlay">
+    <div class="seg-overlay hidden" id="segOverlay">
       <div class="seg-card">
         <div class="seg-spinner"></div>
         <div class="seg-text" id="segText">正在拆分画面元素…</div>
@@ -106,8 +106,14 @@
   </main>
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/three@0.160.0/examples/js/controls/OrbitControls.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.min.js" type="module"></script>
+<script type="module">
+import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.min.js';
+import { OrbitControls } from 'https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/controls/OrbitControls.js';
+window.THREE = THREE;
+THREE.OrbitControls = OrbitControls;
+window.dispatchEvent(new Event('three-ready'));
+</script>
 <script src="segmenter.js"></script>
 <script src="book3d.js"></script>
 <script src="app.js"></script>
