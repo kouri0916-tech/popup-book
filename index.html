@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>立体书样机展示 · Pop-up Book Mockup</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="app">
+
+  <!-- ===== 侧边栏 ===== -->
+  <aside class="sidebar">
+    <div class="brand">
+      <div class="brand-icon">📖</div>
+      <div>
+        <h1>立体书样机</h1>
+        <p class="sub">Pop-up Book Mockup</p>
+      </div>
+    </div>
+
+    <!-- 上传区 -->
+    <div class="upload-zone" id="uploadZone">
+      <input type="file" id="fileInput" accept="image/*" multiple hidden>
+      <div class="upload-icon">⬆</div>
+      <p class="upload-text">点击或拖拽上传画作</p>
+      <p class="upload-hint">支持多张 · 自动拆分 背景/角色/小物件</p>
+    </div>
+
+    <!-- 画作菜单 -->
+    <div class="menu-section">
+      <div class="section-title">作品列表 <span class="count" id="artCount">0</span></div>
+      <div class="art-list" id="artList">
+        <div class="empty-tip">暂无作品，先上传一张试试</div>
+      </div>
+    </div>
+
+    <!-- 图层控制 -->
+    <div class="menu-section" id="layerSection" style="display:none">
+      <div class="section-title">图层拆分</div>
+      <div class="layer-controls" id="layerControls"></div>
+      <button class="ghost-btn" id="reSegBtn">↻ 重新拆分当前作品</button>
+    </div>
+
+    <!-- 展示模式 -->
+    <div class="menu-section">
+      <div class="section-title">展示模式</div>
+      <div class="mode-switch">
+        <button class="mode-btn active" data-mode="book">立体书</button>
+        <button class="mode-btn" data-mode="layers">分层视图</button>
+      </div>
+      <div class="mode-tip" id="modeTip">拖动旋转 · 滚轮缩放 · 观察纸艺景深</div>
+    </div>
+  </aside>
+
+  <!-- ===== 主舞台 ===== -->
+  <main class="stage">
+    <canvas id="stage3d"></canvas>
+
+    <!-- 顶部工具条 -->
+    <div class="stage-toolbar">
+      <div class="toolbar-left">
+        <span class="stage-title" id="stageTitle">未选择作品</span>
+        <span class="stage-badge" id="stageBadge" style="display:none"></span>
+      </div>
+      <div class="toolbar-right">
+        <button class="tool-btn" id="autoRotateBtn" title="自动旋转">⟳</button>
+        <button class="tool-btn" id="resetViewBtn" title="复位视角">⌂</button>
+        <button class="tool-btn" id="openBookBtn" title="开合书本">📖</button>
+      </div>
+    </div>
+
+    <!-- 元素单独显示面板 -->
+    <div class="element-panel" id="elementPanel">
+      <div class="panel-title">元素单独显示</div>
+      <div class="element-tabs" id="elementTabs">
+        <button class="el-tab active" data-layer="all">完整画面</button>
+        <button class="el-tab" data-layer="bg">背景层</button>
+        <button class="el-tab" data-layer="role">角色层</button>
+        <button class="el-tab" data-layer="prop">小物件层</button>
+      </div>
+      <div class="element-desc" id="elementDesc">展示完整立体书效果</div>
+    </div>
+
+    <!-- 拆分进度 -->
+    <div class="seg-overlay" id="segOverlay">
+      <div class="seg-card">
+        <div class="seg-spinner"></div>
+        <div class="seg-text" id="segText">正在拆分画面元素…</div>
+        <div class="seg-bar"><div class="seg-bar-fill" id="segBar"></div></div>
+      </div>
+    </div>
+
+    <!-- 空状态 -->
+    <div class="welcome" id="welcome">
+      <div class="welcome-card">
+        <div class="welcome-book">📚</div>
+        <h2>把你的画变成一本立体书</h2>
+        <p>上传图片后，网站会自动把画面拆分为<b>背景 · 角色 · 小物件</b>三个纸艺层，<br>并以 3D 立体书形式呈现景深效果。</p>
+        <div class="welcome-actions">
+          <button class="primary-btn" id="welcomeUpload">上传画作</button>
+          <button class="ghost-btn" id="demoBtn">载入示例画作</button>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.160.0/examples/js/controls/OrbitControls.js"></script>
+<script src="segmenter.js"></script>
+<script src="book3d.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
