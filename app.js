@@ -9,15 +9,21 @@ const state = {
   currentId: null,
   mode: 'book',        // book | layers
   visibleLayer: 'all', // all | bg | role | prop
+  style: 'vfold',      // vfold | tunnel | popup
   autoRotate: false,
 };
 
 const LAYER_LABEL = { bg: '背景层', role: '角色层', prop: '小物件层' };
 const LAYER_DESC = {
   all:  '展示完整立体书效果',
-  bg:   '背景层 —— 远景纸艺，平贴于书页底部',
-  role: '角色层 —— 画面主体，立起约 36° 形成景深',
-  prop: '小物件层 —— 前景点缀，最靠近观众',
+  bg:   '背景层 —— 远景纸艺，铺于书页 / 隧道深处',
+  role: '角色层 —— 画面主体，沿书脊立起形成景深',
+  prop: '小物件层 —— 前景点缀，逐个独立立起',
+};
+const STYLE_TIP = {
+  vfold:  '书页打开时角色沿中缝呈 V 字立起',
+  tunnel: '多层景片平行排列，向内延伸如隧道',
+  popup:  '打开书页时元素从页缝中弹起立起',
 };
 
 // ---------------- 初始化 ----------------
@@ -38,6 +44,7 @@ function initApp() {
   bindToolbar();
   bindElementTabs();
   bindModeSwitch();
+  bindStyleSwitch();
   $('#demoBtn').addEventListener('click', loadDemo);
   $('#welcomeUpload').addEventListener('click', () => $('#fileInput').click());
 }
@@ -151,7 +158,8 @@ function selectArtwork(id) {
   badge.style.display = '';
   badge.textContent = `角色 ${art.layers.meta.roleBox ? '✓' : '—'} · 小物件 ${art.layers.meta.propCount} 块`;
 
-  Book3D.buildBook(art.layers, state.visibleLayer);
+  Book3D.buildBook(art.layers, state.style);
+  Book3D.applyVisibility(state.visibleLayer);
   Book3D.setMode(state.mode);
   renderLayerControls(art);
   updateElementDesc();
@@ -199,13 +207,28 @@ function renderLayerControls(art) {
 }
 
 function refreshVisibility() {
-  const art = state.artworks.find(a => a.id === state.currentId);
-  if (!art) return;
   const checks = [...document.querySelectorAll('#layerControls input')];
-  for (const [key, pivot] of Object.entries(Book3D.layerMeshes || {})) {
-    const cb = checks.find(c => c.dataset.layer === key);
-    if (cb) pivot.visible = cb.checked && (state.visibleLayer === 'all' || state.visibleLayer === key);
+  for (const [key, list] of Object.entries(Book3D.layerMeshes || {})) {
+    const kind = key.startsWith('prop') ? 'prop' : key;
+    const cb = checks.find(c => c.dataset.layer === kind);
+    if (cb) list.forEach(o => o.visible = cb.checked && (state.visibleLayer === 'all' || state.visibleLayer === kind));
   }
+}
+
+// ---------------- 立体书类型切换 ----------------
+function bindStyleSwitch() {
+  document.querySelectorAll('.style-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      state.style = btn.dataset.style;
+      document.querySelectorAll('.style-btn').forEach(b =>
+        b.classList.toggle('active', b === btn));
+      $('#styleTip').textContent = STYLE_TIP[state.style] || '';
+      Book3D.setStyle(state.style);
+      // 重建后恢复可见性与模式
+      Book3D.applyVisibility(state.visibleLayer);
+      Book3D.setMode(state.mode);
+    });
+  });
 }
 
 // ---------------- 元素单独显示 ----------------
@@ -254,7 +277,7 @@ function bindToolbar() {
     e.currentTarget.classList.toggle('active', state.autoRotate);
   });
   $('#resetViewBtn').addEventListener('click', () => Book3D.resetView());
-  $('#openBookBtn').addEventListener('click', () => Book3D.resetView());
+  $('#openBookBtn').addEventListener('click', () => Book3D.toggleBook());
   $('#reSegBtn').addEventListener('click', async () => {
     const art = state.artworks.find(a => a.id === state.currentId);
     if (!art) return;

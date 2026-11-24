@@ -44,6 +44,22 @@
 
     <!-- 展示模式 -->
     <div class="menu-section">
+      <div class="section-title">立体书类型</div>
+      <div class="style-switch">
+        <button class="style-btn active" data-style="vfold" title="角色沿中缝呈V字立起">
+          <span class="style-icon">⌄</span>V型折页
+        </button>
+        <button class="style-btn" data-style="tunnel" title="多层景片向内延伸如隧道">
+          <span class="style-icon">▤</span>隧道景片
+        </button>
+        <button class="style-btn" data-style="popup" title="打开书页元素弹起">
+          <span class="style-icon">⌃</span>弹起式
+        </button>
+      </div>
+      <div class="style-tip" id="styleTip">书页打开时角色沿中缝呈 V 字立起</div>
+    </div>
+
+    <div class="menu-section">
       <div class="section-title">展示模式</div>
       <div class="mode-switch">
         <button class="mode-btn active" data-mode="book">立体书</button>
@@ -66,7 +82,7 @@
       <div class="toolbar-right">
         <button class="tool-btn" id="autoRotateBtn" title="自动旋转">⟳</button>
         <button class="tool-btn" id="resetViewBtn" title="复位视角">⌂</button>
-        <button class="tool-btn" id="openBookBtn" title="开合书本">📖</button>
+        <button class="tool-btn" id="openBookBtn" title="开书 / 合书">📖</button>
       </div>
     </div>
 
